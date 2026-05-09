@@ -1,0 +1,6 @@
+    {
+      "appId": "com.buildmsgowner.wert",
+      "appName": "WERT Radar",
+      "webDir": ".",
+      "bundledWebRuntime": false
+    }
