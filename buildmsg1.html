@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buildmsg upd1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
+        #map { height: 100vh; width: 100vw; display: none; }
+        #login { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #111; }
+        #login input { padding: 15px; margin: 10px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; width: 220px; }
+        #login button { padding: 15px 30px; background: #00ff00; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #ui { position: absolute; top: 10px; left: 10px; z-index: 1000; background: rgba(0,0,0,0.9); padding: 15px; border-radius: 8px; border: 1px solid #333; display: none; pointer-events: none; }
+        .p-box { width: 28px; height: 28px; border: 2px solid #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px #000; transition: background 0.3s; }
+        #stats { font-size: 12px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<div id="login">
+    <h1 style="color:#00ff00; letter-spacing: 2px;">buildmsg (only fdroid)</h1>
+    <input type="text" id="uid" placeholder="tiktok Sumung a06 ewaste hype">
+    <button onclick="boot()">INITIATE SISTIM BLYADDDDDDDDD</button>
+</div>
+
+<div id="ui">
+    <div id="stats">
+        <div>ID: <span id="u-n">---</span></div>
+        <div>HEX: <span id="h-v">#FF0000</span></div>
+        <div>BALLS: <span id="b-c">0</span></div>
+        <div id="st-msg" style="color:#0f0;">A06 lovely and and and</div>
+    </div>
+    <button onclick="reset()" style="pointer-events: auto; margin-top:10px; background:red; color:white; border:none; padding:4px 8px; font-size:10px;">del all saves blyatttt</button>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let map, me, myId, myHex = "#ff0000", balls = 0, trail = [];
+    let activeB = [], trailLayer;
+
+    window.onload = () => {
+        const data = localStorage.getItem('WERT_UPD1_SAVE');
+        if(data) {
+            const parsed = JSON.parse(data);
+            myId = parsed.name;
+            myHex = parsed.hex;
+            balls = parsed.balls;
+            boot();
+        }
+    };
+
+    function save() {
+        localStorage.setItem('WERT_UPD1_SAVE', JSON.stringify({name: myId, hex: myHex, balls: balls}));
+    }
+
+    function reset() {
+        localStorage.removeItem('WERT_UPD1_SAVE');
+        location.reload();
+    }
+
+    function boot() {
+        const input = document.getElementById('uid').value;
+        if(!myId) myId = input;
+        if(!myId) return;
+
+        document.getElementById('u-n').innerText = myId;
+        document.getElementById('b-c').innerText = balls;
+        document.getElementById('h-v').innerText = myHex;
+        document.getElementById('h-v').style.color = myHex;
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('map').style.display = 'block';
+        document.getElementById('ui').style.display = 'block';
+        init();
+    }
+
+    function init() {
+        if(map) return;
+        map = L.map('map', { zoomControl: false }).setView([13.75, 100.5], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        setInterval(spawn, 1);
+
+        map.locate({watch: true, enableHighAccuracy: true, maximumAge: 0});
+        map.on('locationfound', (e) => {
+            const loc = e.latlng;
+            if(!me) {
+                me = L.marker(loc, { 
+                    icon: L.divIcon({
+                        className:'p-box', 
+                        html:`<div id="box-render" style="background:${myHex}; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">${myId.substring(0,3)}</div>`
+                    }) 
+                }).addTo(map);
+                map.setView(loc, 17);
+            } else {
+                me.setLatLng(loc);
+            }
+
+            trail.push(loc);
+            if(trailLayer) map.removeLayer(trailLayer);
+            trailLayer = L.polyline(trail, {color: myHex, weight: 4, opacity: 0.8, smoothFactor: 1}).addTo(map);
+
+            activeB.forEach((b, i) => {
+                if(loc.distanceTo(b.pos) < 5000) {
+                    map.removeLayer(b.m);
+                    myHex = b.hex;
+                    balls++;
+                    document.getElementById('b-c').innerText = balls;
+                    document.getElementById('h-v').innerText = myHex;
+                    document.getElementById('h-v').style.color = myHex;
+                    document.getElementById('box-render').style.backgroundColor = myHex;
+                    if(trailLayer) trailLayer.setStyle({color: myHex});
+                    activeB.splice(i, 1);
+                    save();
+                }
+            });
+        });
+    }
+
+    function spawn() {
+        const h = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');
+        const p = L.latLng((Math.random()*180)-90, (Math.random()*360)-180);
+        const m = L.circleMarker(p, { radius: 6, color: h, fillColor: h, fillOpacity: 0.9 }).addTo(map);
+        activeB.push({m, pos: p, hex: h});
+        setTimeout(() => { 
+            map.removeLayer(m); 
+            activeB = activeB.filter(x => x.m !== m); 
+        }, 15000);
+    }
+</script>
+</body>
+</html>
