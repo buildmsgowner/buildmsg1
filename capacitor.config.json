@@ -1,6 +1,10 @@
-    {
-      "appId": "com.trail.multiplayer.buildmsg",
-      "appName": "Buildmsg",
-      "webDir": ".",
-      "bundledWebRuntime": false
-    }
+{
+  "appId": "com.buildmsgowner.wert",
+  "appName": "WERT Radar",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://buildmsgowner.github.io/buildmsg1/",
+    "cleartext": true
+  }
+}
