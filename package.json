@@ -1,6 +1,6 @@
 {
-  "name": "wert-radar",
-  "version": "1.0.0",
+  "name": "buildmsg",
+  "version": "1",
   "dependencies": {
     "@capacitor/android": "^5.0.0",
     "@capacitor/cli": "^5.0.0",
