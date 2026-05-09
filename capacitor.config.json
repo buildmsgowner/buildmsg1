@@ -1,6 +1,6 @@
     {
-      "appId": "com.buildmsgowner.wert",
-      "appName": "WERT Radar",
+      "appId": "com.trail.multiplayer.buildmsg",
+      "appName": "Buildmsg",
       "webDir": ".",
       "bundledWebRuntime": false
     }
