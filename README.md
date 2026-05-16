@@ -1,1 +1,1 @@
-buildmsg is repurposed to f1, still keeps the name because of effort
+buildmsg is repurposed to a public board, still keeps the name because of effort
